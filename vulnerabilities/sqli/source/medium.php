@@ -1,52 +1,59 @@
 <?php
 
 if( isset( $_POST[ 'Submit' ] ) ) {
-	// Get input
-	$id = $_POST[ 'id' ];
+    // Get input
+    $id = $_POST[ 'id' ];
 
-	$id = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $id);
+    if( !is_numeric( $id ) || !ctype_digit( $id ) ) {
+        echo "<pre>Error: Input tidak valid! User ID harus berupa angka murni.</pre>";
+        exit();
+    }
 
-	switch ($_DVWA['SQLI_DB']) {
-		case MYSQL:
-			$query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
-			$result = mysqli_query($GLOBALS["___mysqli_ston"], $query) or die( '<pre>' . mysqli_error($GLOBALS["___mysqli_ston"]) . '</pre>' );
+    $id = (int)$id;
 
-			// Get results
-			while( $row = mysqli_fetch_assoc( $result ) ) {
-				// Display values
-				$first = $row["first_name"];
-				$last  = $row["last_name"];
+    $id = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $id);
 
-				// Feedback for end user
-				$html .= "<pre>ID: {$id}<br />First name: {$first}<br />Surname: {$last}</pre>";
-			}
-			break;
-		case SQLITE:
-			global $sqlite_db_connection;
+    switch ($_DVWA['SQLI_DB']) {
+        case MYSQL:
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+            $result = mysqli_query($GLOBALS["___mysqli_ston"], $query) or die( '<pre>' . mysqli_error($GLOBALS["___mysqli_ston"]) . '</pre>' );
 
-			$query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
-			#print $query;
-			try {
-				$results = $sqlite_db_connection->query($query);
-			} catch (Exception $e) {
-				echo 'Caught exception: ' . $e->getMessage();
-				exit();
-			}
+            // Get results
+            while( $row = mysqli_fetch_assoc( $result ) ) {
+                // Display values
+                $first = $row["first_name"];
+                $last  = $row["last_name"];
 
-			if ($results) {
-				while ($row = $results->fetchArray()) {
-					// Get values
-					$first = $row["first_name"];
-					$last  = $row["last_name"];
+                // Feedback for end user
+                $html .= "<pre>ID: {$id}<br />First name: {$first}<br />Surname: {$last}</pre>";
+            }
+            break;
+        case SQLITE:
+            global $sqlite_db_connection;
 
-					// Feedback for end user
-					$html .= "<pre>ID: {$id}<br />First name: {$first}<br />Surname: {$last}</pre>";
-				}
-			} else {
-				echo "Error in fetch ".$sqlite_db->lastErrorMsg();
-			}
-			break;
-	}
+            $query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+            #print $query;
+            try {
+                $results = $sqlite_db_connection->query($query);
+            } catch (Exception $e) {
+                echo 'Caught exception: ' . $e->getMessage();
+                exit();
+            }
+
+            if ($results) {
+                while ($row = $results->fetchArray()) {
+                    // Get values
+                    $first = $row["first_name"];
+                    $last  = $row["last_name"];
+
+                    // Feedback for end user
+                    $html .= "<pre>ID: {$id}<br />First name: {$first}<br />Surname: {$last}</pre>";
+                }
+            } else {
+                echo "Error in fetch ".$sqlite_db->lastErrorMsg();
+            }
+            break;
+    }
 }
 
 // This is used later on in the index.php page
