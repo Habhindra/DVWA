@@ -6,7 +6,8 @@ if( isset( $_SESSION [ 'id' ] ) ) {
 	
 if( !is_numeric( $id ) || !ctype_digit( $id ) ) {
     echo "<pre>Error: Input tidak valid! User ID harus berupa angka murni.</pre>";
-} else {
+    } else {
+} 
 $id = (int)$id;
 
 	switch ($_DVWA['SQLI_DB']) {
