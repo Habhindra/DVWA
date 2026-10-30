@@ -3,6 +3,12 @@
 if( isset( $_SESSION [ 'id' ] ) ) {
 	// Get input
 	$id = $_SESSION[ 'id' ];
+	
+if( !is_numeric( $id ) || !ctype_digit( $id ) ) {
+    echo "<pre>Error: Input tidak valid! User ID harus berupa angka murni.</pre>";
+    exit();
+}
+$id = (int)$id;
 
 	switch ($_DVWA['SQLI_DB']) {
 		case MYSQL:
